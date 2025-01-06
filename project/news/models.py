@@ -7,22 +7,24 @@ class Author(models.Model):
     user_rating = models.IntegerField(default=0)
 
     def update_rating(self):
-        rating = 0
-        list_post = list(Post.objects.filter(author = self.pk))
-        for x in list_post:
-            rating += rating + (x.rating * 3)
-            list_comm = Comment.objects.filter(post = x.pk)
-            for y in list_comm:
-                rating += y.rating
-        list_comm = list(Comment.objects.filter(user = self.user))
-        for x in list_comm:
-            rating += x.rating
-        return rating
-"""        post = sum(self_pk.Post_set.all('rating')) * 3
-        comment = sum(self_pk.Comment_set.all('rating'))
-        post_comment = self_pk.Post_set.all('pk')
-        post_comment = sum(post_comment.Comment_set.all('rating'))
-        return post + comment + post_comment"""
+        post_rating = 0
+        comment_rating = 0
+        comment_post_rating = 0
+
+        list_post = Post.objects.filter(author=self)
+        for p in list_post:
+            post_rating += p.rating
+
+        list_comm = Comment.objects.filter(user=self.user)
+        for c in list_comm:
+            comment_rating += c.rating
+
+        list_comm_post = Comment.objects.filter(post__author=self)
+        for cp in list_comm_post:
+            comment_post_rating += cp.rating
+
+        self.user_rating = post_rating * 3 + comment_rating + comment_post_rating
+        self.save()
 
 
 class Category(models.Model):
