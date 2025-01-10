@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
 
     def update_rating(self):
         post_rating = 0
@@ -30,6 +34,9 @@ class Author(models.Model):
 class Category(models.Model):
     category = models.CharField(unique=True, max_length=100)
 
+    def __str__(self):
+        return self.category
+
 
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
@@ -40,6 +47,9 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     text = models.TextField()
     rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.title}/n{self.preview()}'
 
     def like(self):
         self.rating += 1
@@ -52,6 +62,9 @@ class Post(models.Model):
     def preview(self):
         tx = self.text[0:125] + '...'
         return tx
+
+    def get_absolute_url(self):
+        return reverse('new_detail', args=[str(self.pk)])
 
 
 class PostCategory(models.Model):
@@ -73,3 +86,4 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+

@@ -10,6 +10,12 @@ News
 <!-- В контенте на странице мы выводим все товары -->
 {% block content %}
     <h1>Все новости</h1>
+    <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+    </form>
     {% if posts %}
         <p></p>
         {% for post in posts %}
@@ -30,24 +36,5 @@ News
         {% endfor %}
     {% else %}
         <h2>Новостей нет!</h2>
-    {% endif %}
-    {% if page_obj.has_previous %}
-           <a href="?page=1">1</a>
-           {% if page_obj.previous_page_number != 1 %}
-               ...
-               <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
-           {% endif %}
-    {% endif %}
-
-       {# Информация о текущей странице #}
-    {{ page_obj.number }}
-
-       {# Информация о следующих страницах #}
-    {% if page_obj.has_next %}
-           <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-           {% if paginator.num_pages != page_obj.next_page_number %}
-               ...
-               <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
-           {% endif %}
     {% endif %}
 {% endblock content %}
