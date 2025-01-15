@@ -48,12 +48,13 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.yandex'
 #123123
 ]
 
 LOGIN_URL = '/accounts/login/'
 
-LOGIN_REDIRECT_URL = '/news/'
+LOGIN_REDIRECT_URL = '/news/profile'
 
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
 

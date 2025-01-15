@@ -6,7 +6,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post
 from .filters import NewFilter
 from .forms import NewsForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
@@ -40,10 +40,11 @@ class PostDetail(DetailView):
     context_object_name = 'new'
 
 
-class NewsCreate(CreateView):
+class NewsCreate(PermissionRequiredMixin, CreateView):
     form_class = NewsForm
     model = Post
     template_name = 'news_edit.html'
+    permission_required = ('news.add_post')
 
     def form_valid(self, form):
         news = form.save(commit=False)
@@ -51,10 +52,11 @@ class NewsCreate(CreateView):
         return super().form_valid(form)
 
 
-class ArticlesCreate(CreateView):
+class ArticlesCreate(PermissionRequiredMixin,CreateView):
     form_class = NewsForm
     model = Post
     template_name = 'news_edit.html'
+    permission_required = ('news.add_post')
 
     def form_valid(self, form):
         news = form.save(commit=False)
@@ -62,20 +64,22 @@ class ArticlesCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(LoginRequiredMixin, UpdateView):
+class NewsUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     form_class = NewsForm
     model = Post
     template_name = 'news_edit.html'
+    permission_required = ('news.change_post')
 
 
-class NewsDelete(DeleteView):
+class NewsDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'news_delete.html'
     success_url = reverse_lazy('news_list')
+    permission_required = ('news.delete_post')
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'flatpages/default.html'
+    template_name = 'flatpages/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -89,4 +93,4 @@ def upgrade_me(request):
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
-    return redirect('/')
+    return redirect('/news/profile')

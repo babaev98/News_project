@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (PostsList, PostDetail, PostsListSearch, NewsCreate, NewsUpdate, NewsDelete, ArticlesCreate,
-                    upgrade_me)
+                    upgrade_me, IndexView)
 
 urlpatterns = [
    # path — означает путь.
@@ -19,4 +19,5 @@ urlpatterns = [
    path('articles/<int:pk>/update/', NewsUpdate.as_view(), name='news_update'),
    path('articles/<int:pk>/delete/', NewsDelete.as_view(), name='news_delete'),
    path('upgrade/', upgrade_me, name='upgrade'),
+   path('profile/', IndexView.as_view(), name='profile'),
 ]
